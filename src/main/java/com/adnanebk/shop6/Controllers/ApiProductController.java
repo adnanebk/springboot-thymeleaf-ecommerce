@@ -64,7 +64,7 @@ public class ApiProductController {
     @GetMapping({"/Product/{id}"})
     public ResponseEntity<?> getProductById(@PathVariable("id") int id) {
         Optional<Product> Product = this.productService.GetAllProducts().stream().filter((p) -> p.getId() == id).findFirst();
-        return Product.isEmpty() ?  ResponseEntity.notFound().build() :ResponseEntity.ok(Product.get());
+        return !Product.isPresent() ?  ResponseEntity.notFound().build() :ResponseEntity.ok(Product.get());
     }
 
     @PostMapping({"/create"})
@@ -114,7 +114,7 @@ public class ApiProductController {
     )
     public ResponseEntity<?> deleteProduct(@PathVariable("id") int id) {
         Optional<Product> Product = this.productService.GetAllProducts().stream().filter((p) -> p.getId() == id).findFirst();
-        if (Product.isEmpty()) {
+        if (!Product.isPresent()) {
             return ResponseEntity.notFound().build();
         } else {
             this.productService.RemoveProductById(id);

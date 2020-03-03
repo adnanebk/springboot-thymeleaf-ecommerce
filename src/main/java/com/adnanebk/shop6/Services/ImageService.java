@@ -51,13 +51,13 @@ public class ImageService {
 
         String resoureString = resourceLoader.getResource("classpath:/static").getFile().getAbsolutePath() + "/uploadingDir/";
         // Stream paths = Files.walk(Paths.get(resoureString));
-        var prodUrls=   products.stream().
+        List<String> prodUrls=   products.stream().
                 flatMap(p-> Stream.of(p.getImageUrl(),p.getImageUrl2(),p.getImageUrl3(),p.getImageUrl4())).collect(Collectors.toList());
 
         Files.list(Paths.get(resoureString)).
                 forEach(file-> {
 
-                    var test=prodUrls.stream().anyMatch(p->p.toLowerCase().endsWith(file.getFileName().toString().toLowerCase()));
+                    boolean test=prodUrls.stream().anyMatch(p->p.toLowerCase().endsWith(file.getFileName().toString().toLowerCase()));
 
 
 
