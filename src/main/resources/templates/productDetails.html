@@ -1,0 +1,212 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+
+      layout:decorate="~{master.html}"  >
+
+<head>
+    <title>Product details page</title>
+</head>
+
+<body layout:fragment="thebody" >
+
+<!-- Navigation -->
+<header th:replace="/master.html :: header"> </header>
+
+<!-- Page Content -->
+
+<!-- Page Content -->
+
+<!--<div th:if="${showCont=='true'}" th:replace="/master.html :: cont"> </div>-->
+<!-- /.container -->
+
+<div class="container">
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+
+    <div class="card">
+        <div class="row">
+            <aside class="col-sm-5 border-right">
+                <article class="gallery-wrap">
+                    <div class="img-">
+                        <div> <div class="imgHolder"><img class="img-fluid item-gallery" id="img" th:src="${product.getImageUrl()}"></div></div>
+                    </div> <!-- slider-product.// -->
+                    <div class="img-small-wrap">
+
+                        <div class="item-gallery"><img onclick="changeImage(this)" th:src="${product.getImageUrl()}"></div>
+                        <div class="item-gallery"> <img onclick="changeImage(this)" th:src="${product.getImageUrl2()}"> </div>
+                        <div class="item-gallery"> <img onclick="changeImage(this)" th:src="${product.getImageUrl3()}"> </div>
+                        <div class="item-gallery"> <img onclick="changeImage(this)" th:src="${product.getImageUrl4()}"> </div>
+                    </div> <!-- slider-nav.// -->
+                </article> <!-- gallery-wrap .end// -->
+            </aside>
+            <aside class="col-sm-7">
+                <article class="card-body p-5" style="padding:1rem;">
+                    <h3 id="pname" th:text="${product.getName()}" class="title mb-3">Original Version of Some product name</h3>
+
+                    <p class="price-detail-wrap">
+	<span class="price h3 text-warning">
+		<span class="currency"></span><span id="price" th:text="${product.getPrice()} + #{currrency}" class="num"></span>
+	</span>
+
+                    </p> <!-- price-detail-wrap .// -->
+                    <dl class="item-property">
+                        <dt>Description</dt>
+                        <dd><p th:text="${product.getDescription()}">Here goes description consectetur adipisicing elit, sed do eiusmod
+                            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                            quis nostrud exercitation ullamco </p></dd>
+                    </dl>
+                   <!-- <dl class="param param-feature">
+                        <dt>Model#</dt>
+                        <dd>12345611</dd>
+                    </dl>  &lt;!&ndash; item-property-hor .// &ndash;&gt;
+                    <dl class="param param-feature">
+                        <dt>Color</dt>
+                        <dd>Black and white</dd>
+                    </dl>  &lt;!&ndash; item-property-hor .// &ndash;&gt;
+                    <dl class="param param-feature">
+                        <dt>Delivery</dt>
+                        <dd>Russia, USA, and Europe</dd>
+                    </dl>   item-property-hor .// -->
+
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-5">
+                            <dl class="param param-inline">
+                                <dt th:text="#{quantity}">Quantity: </dt>
+                                <dd>
+                                    <select  id="selectQt" class="form-control form-control-sm" style="width:70px;">
+
+                                        <option th:each="i: ${#numbers.sequence(1, 100)}" th:selected="${quantity==i}" th:value="${i}" th:text="${i}">  </option>
+
+                                    </select>
+                                </dd>
+                            </dl>  <!-- item-property .// -->
+<!--                            <b>Total : <span id="total" th:text="${quantity!=null}?${total}:${product.price}"></span><span th:text="#{currrency}"></span></b>-->
+                            <b>Total : <span id="total" th:text="${total}"></span><span th:text="#{currrency}"></span></b>
+                        </div> <!-- col.// -->
+                        <!--<div class="col-sm-7">
+                            <dl class="param param-inline">
+                                <dt>Size: </dt>
+                                <dd>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                        <span class="form-check-label">SM</span>
+                                    </label>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                        <span class="form-check-label">MD</span>
+                                    </label>
+                                    <label class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                                        <span class="form-check-label">XXL</span>
+                                    </label>
+                                </dd>
+                            </dl>  &lt;!&ndash; item-property .// &ndash;&gt;
+                        </div> &lt;!&ndash; col.// &ndash;&gt;-->
+                    </div> <!-- row.// -->
+                    <hr>
+<!--
+                    <form method="post" class="fr1" th:action="@{/item/}+${product.getName()}"  >
+-->
+                    <form method="post" class="fr1"   >
+                        <input type="hidden" th:value="${product.getName()}"  name="prodName">
+                        <a  id="buyLink" th:href="@{/checkout}+'?prod='+${product.getName()}+'&qt=1'" style="display: inline-block"  class="btn btn-lg btn-primary text-uppercase" th:text="#{buy-now}"> Buy now </a>
+                    <!--<button id="edit" type="submit"  th:text="${present!=null}?#{update-cart}:#{add-to-cart}" href="#" name="edit"  class="btn btn-lg btn-outline-primary text-uppercase" >Add to cart </button>
+                    <button id="remove" type="submit" th:if="${quantity!=null}" href="#" class="btn btn-lg btn-outline-danger text-uppercase" name="remove">Remove</button>
+-->
+                        <button th:hidden="${quantity!=null}"  id="edit" name="edit" class="btn btn-lg btn-primary" th:text="#{add-to-cart}" >Add to cart </button>
+                        <button th:hidden="${quantity==null}" id="remove"  class="btn btn-lg btn-warning" name="remove" th:text="#{remove-from-cart}">Remove from the cart</button>
+
+                    </form>
+                </article> <!-- card-body.// -->
+            </aside> <!-- col.// -->
+        </div> <!-- row.// -->
+    </div> <!-- card.// -->
+
+
+</div>
+
+<!--container.//-->
+
+</body>
+
+
+
+</html>
+
+
+<style>
+
+.imgHolder{
+    text-align: center;
+}
+
+.col-sm-7{
+    padding: 0px;
+}
+    @media only screen and (min-width: 450px) {
+        .item-gallery{
+            max-height: 450px;
+            width: auto;
+            display: inline-block;
+            cursor: zoom-in;
+        }
+        .imgbigwrap{
+            min-height: 450px;
+        }
+    }
+
+
+    @media only screen and (max-width: 450px) {
+        .imgbigwrap{
+            min-height: 240px;
+        }
+        .item-gallery{
+            max-height: 220px;
+            width: auto;
+            display: inline-block;
+            cursor: zoom-in;
+        }
+    }
+@media only screen and (max-width: 383px) {
+    #edit,#remove,#buyLink{
+padding: 4px;
+    }
+}
+
+    .gallery-wrap .img-small-wrap .item-gallery {
+        width: 60px;
+        height: 60px;
+        border: 1px solid #ddd;
+        margin: 7px 2px;
+        display: inline-block;
+        overflow: hidden;
+    }
+
+    .gallery-wrap .img-small-wrap {
+        text-align: center;
+    }
+    .gallery-wrap .img-small-wrap img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: cover;
+        border-radius: 4px;
+        cursor: grab;
+    }
+
+    #pname{
+        color:orangered;
+        font-weight: bold;
+    }
+</style>

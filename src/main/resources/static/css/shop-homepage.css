@@ -1,0 +1,160 @@
+/*!
+ * Start Bootstrap - Shop Homepage (https://startbootstrap.com/template-overviews/shop-homepage)
+ * Copyright 2013-2019 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap-shop-homepage/blob/master/LICENSE)
+ */
+
+html{
+    position: relative;
+    min-height: 100%;
+
+}
+body {
+  padding-top: 56px;
+    margin: 0 0 100px; /* bottom = footer height */
+    background-color: ghostwhite;
+}
+.card a{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.card-img-top{
+ width: auto;
+  height: 200px;
+}
+/*.card-img-top:hover{
+    transform: scale(1.5);
+}*/
+.card-title a{
+  font-size: 1.2rem;
+}
+.col-lg-3{
+    background-color: cadetblue;
+}
+.it:hover{
+    background-color: #4e555b;
+}
+.my-4{
+    color: white;
+}
+#logo {
+    border: 2px solid goldenrod;
+    padding: 3px;
+    background-color: #3b5e5e;
+
+    display: table-cell;
+    height: 180px;
+    /*change this and the width
+   for the size of your initial circle*/
+    width: 180px;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 50%;
+    color: antiquewhite;
+    /*make it pretty*/
+}
+
+#cat{
+    color: white;
+}
+nav{
+    border-bottom: 2px solid peru;
+}
+footer{
+    border-top: 2px solid black;
+}
+.list-group-item:hover{
+    background-color: darkseagreen;
+}
+.dropdown-item:hover{
+    background-color:beige;
+}
+
+
+.list-group-item{
+    color: #343a40;
+    font-size: large;
+}
+
+/**THE SAME CSS IS USED IN ALL 3 DEMOS**/
+/**gallery margins**/
+ul.gallery{
+    margin-left: 3vw;
+    margin-right:3vw;
+}
+
+.zoom {
+    -webkit-transition: all 0.35s ease-in-out;
+    -moz-transition: all 0.35s ease-in-out;
+    transition: all 0.35s ease-in-out;
+    cursor: -webkit-zoom-in;
+    cursor: -moz-zoom-in;
+    cursor: zoom-in;
+}
+@media only screen and (min-width: 768px) {
+
+    .zoom:hover,
+    .zoom:active,
+    .zoom:focus {
+        /**adjust scale to desired size,
+        add browser prefixes**/
+        -ms-transform: scale(1.5);
+        -moz-transform: scale(1.5);
+        -webkit-transform: scale(1.5);
+        -o-transform: scale(1.5);
+        transform: scale(1.5);
+        position:relative;
+        z-index:100;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    .zoom:hover,
+    .zoom:active,
+    .zoom:focus {
+        /**adjust scale to desired size,
+        add browser prefixes**/
+        -ms-transform: scale(1.2);
+        -moz-transform: scale(1.2);
+        -webkit-transform: scale(1.2);
+        -o-transform: scale(1.2);
+        transform: scale(1.2);
+        position: relative;
+        z-index: 100;
+    }
+}
+
+/**To keep upscaled images visible on mobile,
+increase left & right margins a bit**/
+@media only screen and (max-width: 768px) {
+    ul.gallery {
+        margin-left: 15vw;
+        margin-right: 15vw;
+    }
+
+    /**TIP: Easy escape for touch screens,
+    give gallery's parent container a cursor: pointer.**/
+    .DivName {cursor: pointer}
+}
+.navbar-brand{
+    color: darkgoldenrod;
+}
+footer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    border-top: 2px solid peru;
+
+}
+footer .container{
+    height: 0;
+}
+
+
+
+
+
+

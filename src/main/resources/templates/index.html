@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+
+      layout:decorate="~{master.html}"  >
+
+<head>
+  <title>Shop Homepage</title>
+
+</head>
+
+<body layout:fragment="thebody" >
+<!-- Navigation -->
+<header th:replace="/master.html :: header"> </header>
+
+  <!-- Page Content -->
+  <div th:if="${showCont=='true'}" th:replace="/master.html :: cont"> </div>.
+  <!-- /.container -->
+  <!-- ========================= SECTION CONTENT ========================= -->
+  <section class="section-content padding-y">
+    <div class="container">
+
+      <div class="row">
+        <aside class="col-md-3">
+
+          <div class="card">
+            <article class="filter-group">
+              <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
+                  <i class="icon-control fa fa-chevron-down"></i>
+
+                  <h6 class="title" th:text="#{categories}">Product type</h6>
+                </a>
+              </header>
+              <div class="filter-content collapse show" id="collapse_1" style="">
+                <div class="card-body">
+
+
+                  <ul class="list-menu">
+                    <li th:each="cat:${categories}" >
+                      <a  th:class="${cat.getName().equals(categ)}?'list-group-item activeCat':'list-group-item' " th:text="${cat.name}"
+                       th:href="@{/(cat=${cat.name},sort=${sort},view=${view},search=${search},min=${min},max=${max})}" >People  </a></li>
+                  </ul>
+
+                </div> <!-- card-body.// -->
+              </div>
+            </article> <!-- filter-group  .// -->
+<!--
+            <article class="filter-group">
+              <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_2" aria-expanded="true" class="">
+                  <i class="icon-control fa fa-chevron-down"></i>
+                  <h6 class="title">Brands </h6>
+                </a>
+              </header>
+              <div class="filter-content collapse show" id="collapse_2" style="">
+                <div class="card-body">
+                  <label class="custom-control custom-checkbox">
+                    <input type="checkbox" checked="" class="custom-control-input">
+                    <div class="custom-control-label">Mercedes
+                      <b class="badge badge-pill badge-light float-right">120</b>  </div>
+                  </label>
+                  <label class="custom-control custom-checkbox">
+                    <input type="checkbox" checked="" class="custom-control-input">
+                    <div class="custom-control-label">Toyota
+                      <b class="badge badge-pill badge-light float-right">15</b>  </div>
+                  </label>
+                  <label class="custom-control custom-checkbox">
+                    <input type="checkbox" checked="" class="custom-control-input">
+                    <div class="custom-control-label">Mitsubishi
+                      <b class="badge badge-pill badge-light float-right">35</b> </div>
+                  </label>
+                  <label class="custom-control custom-checkbox">
+                    <input type="checkbox" checked="" class="custom-control-input">
+                    <div class="custom-control-label">Nissan
+                      <b class="badge badge-pill badge-light float-right">89</b> </div>
+                  </label>
+                  <label class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input">
+                    <div class="custom-control-label">Honda
+                      <b class="badge badge-pill badge-light float-right">30</b>  </div>
+                  </label>
+                </div> &lt;!&ndash; card-body.// &ndash;&gt;
+              </div>
+            </article> &lt;!&ndash; filter-group .// &ndash;&gt;
+-->
+            <article class="filter-group">
+              <header class="card-header">
+                <a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true" class="">
+                  <i class="icon-control fa fa-chevron-down"></i>
+                  <h6 class="title">Price range </h6>
+                </a>
+              </header>
+              <div class="filter-content collapse show" id="collapse_3" style="">
+                <div class="card-body">
+                  <form method="get" th:action="@{/}">
+                  <div class="form-row">
+                    <div class="form-group col-md-6">
+                      <label>Min</label>
+                      <input class="form-control" th:value="${min!=null?min:0}" required name="min" id="min" placeholder="0" type="number">
+                      <input hidden name="sort" th:value="${sort}" >
+                      <input hidden name="search" th:value="${search}" >
+                      <input hidden name="cat" th:value="${categ}" >
+                      <input hidden name="view" th:value="${view}" >
+                    </div>
+                    <div class="form-group text-right col-md-6">
+                      <label>Max</label>
+                      <input class="form-control" th:value="${max!=null?max:0}" required name="max" id="max" placeholder="0" type="number">
+                    </div>
+                  </div> <!-- form-row.// -->
+                  <button class="btn btn-block btn-primary" type="submit">Apply</button>
+                  </form>
+                </div><!-- card-body.// -->
+              </div>
+            </article> <!-- filter-group .// -->
+          </div> <!-- card.// -->
+
+        </aside> <!-- col.// -->
+        <main class="col-md-9">
+
+          <header class="border-bottom mb-4 pb-3">
+            <div class="form-inline">
+              <span class="mr-md-auto mr-2"><span th:text="${count}">0</span> Items found </span>
+              <form method="get" id="searchform" th:action="@{/}" class="form-inline my-2 my-lg-0 mr-2">
+                <div class="input-group input-group" id="inputgroup">
+                  <input id="search" type="text" name="search"  class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm"
+                         th:value="${search}"  th:placeholder="#{search}" >
+                  <input hidden name="sort" th:value="${sort}" >
+                  <input hidden name="cat" th:value="${categ}" >
+                  <input hidden name="view" th:value="${view}" >
+                  <input hidden name="min" th:value="${min}" >
+                  <input hidden name="max" th:value="${max}" >
+                  <div class="input-group-append">
+                    <button id="searchBt"   type="submit" class="btn btn-secondary btn-number" >
+                      <i class="fa fa-search"></i>
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              <div class="dropdown mr-2">
+                <button th:text="#{sort-by}+' '+${sort}"  th:value="${sort}" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                </button>
+                <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+                  <a th:text="#{name}" class="dropdown-item"  th:href="@{/(sort='Name',cat=${categ},view=${view},search=${search},min=${min},max=${max})}">Name</a>
+                  <a th:text="#{price-low-high}" class="dropdown-item"  th:href="@{/(sort='LowPrice',cat=${categ},view=${view},search=${search},min=${min},max=${max})}">Price : low to high</a>
+                  <a class="dropdown-item" th:text="#{price-high-low}"  th:href="@{/(sort='HighPrice',cat=${categ},view=${view},search=${search},min=${min},max=${max})}">Price : high to low</a>
+                  <a class="dropdown-item" th:text="#{newest}" th:href="@{/(sort='Newest',cat=${categ},view=${view},search=${search},min=${min},max=${max})}">Newest</a>
+
+                </div>
+              </div>
+
+              <div class="btn-group">
+                <a th:href="@{/(view='list')}" view="list" th:class="${view=='list'}?'myview btn btn-outline-secondary active':'btn btn-outline-secondary'" data-toggle="tooltip" title="List view">
+                  <i class="fa fa-bars"></i></a>
+                <a th:href="@{/(view='grid')}" view="grid" th:class="${view=='grid'}?'myview btn btn-outline-secondary active':'btn btn-outline-secondary'" data-toggle="tooltip" title="Grid view">
+                  <i class="fa fa-th"></i></a>
+              </div>
+            </div>
+          </header><!-- sect-heading -->
+
+          <div  id="v1" th:if="${view=='grid'}" class="row">
+            <div th:each="prod:${products}" class="col-md-4">
+              <figure class="card card-product-grid">
+                <div class="img-wrap allimg">
+<!--                  <span class="badge badge-danger"> NEW </span>-->
+                  <img  class="card-img-top img-responsive img-fluid thumbnail zoom i1 im1" th:src="${prod.getImageUrl()}" onmouseenter="enterm(this)" onmouseleave="exitm(this)" >
+                  <img  hidden="hidden" class=" img-responsive img-fluid thumbnail zoom i1" th:src="${prod.getImageUrl2()}" alt="">
+                  <img  hidden="hidden" class=" img-responsive img-fluid thumbnail zoom i1" th:src="${prod.getImageUrl3()}" alt="">
+                  <img  hidden="hidden" class=" img-responsive img-fluid thumbnail zoom i1" th:src="${prod.getImageUrl4()}" alt="">
+                  <a class="btn-overlay" th:href="@{/item/}+${prod.getName()}" ><i class="fa fa-search-plus"></i> Quick view</a>
+                </div> <!-- img-wrap.// -->
+                <figcaption class="info-wrap">
+                  <div class="fix-height">
+                    <a th:href="@{/item/}+${prod.getName()}" class="title" th:text="${prod.getName()}">Great item name goes here</a>
+                    <div class="price-wrap mt-2">
+                      <span class="price" th:text="${prod.getPrice()}+#{currrency}">$1280</span>
+                      <del class="price-old" th:text="${prod.getPrice()-50}+#{currrency}">$1980</del>
+                    </div> <!-- price-wrap.// -->
+                  </div>
+                  <form method="post" class="fr1"  >
+                    <input type="hidden" th:value="${prod.getName()}"  name="prodName">
+                    <button  th:hidden="${#lists.contains(prodsIdsInCart,prod.getId())}"  id="edit" name="edit" class="btn btn-block btn-primary" th:text="#{add-to-cart}">Add to cart </button>
+                    <button th:hidden="${!#lists.contains(prodsIdsInCart,prod.getId())}" id="remove"  class="btn btn-block btn-warning" name="remove" th:text="#{remove-from-cart}">Remove from the cart</button>
+
+                  </form>
+                </figcaption>
+              </figure>
+            </div> <!-- col.// -->
+
+
+          </div> <!-- row end.// -->
+          <article th:each="prod:${products}" id="v2" th:if="${view=='list'}"  class="card card-product-list">
+            <div class="row no-gutters">
+              <aside class="col-md-3">
+                <div class="img-wrap">
+                  <span class="badge badge-danger"> NEW </span>
+                  <img  class="card-img-top img-responsive img-fluid thumbnail zoom i1 im1" th:src="${prod.getImageUrl()}" onmouseenter="enterm(this)" onmouseleave="exitm(this)" >
+                  <img  hidden="hidden" class=" img-responsive img-fluid thumbnail zoom i1" th:src="${prod.getImageUrl2()}" alt="">
+                  <img  hidden="hidden" class=" img-responsive img-fluid thumbnail zoom i1" th:src="${prod.getImageUrl3()}" alt="">
+                  <img  hidden="hidden" class=" img-responsive img-fluid thumbnail zoom i1" th:src="${prod.getImageUrl4()}" alt="">
+                </div>
+              </aside> <!-- col.// -->
+              <div class="col-md-6">
+                <div class="info-main">
+                  <a th:href="@{/item/}+${prod.getName()}" class="h5 title" th:text="${prod.getName()}"> Great product name goes here  </a>
+                  <div class="rating-wrap mb-3">
+                    <ul class="rating-stars">
+                      <li style="width:80%" class="stars-active">
+                        <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                      </li>
+                      <li>
+                        <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i> <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                      </li>
+                    </ul>
+                    <div class="label-rating">1/10</div>
+                  </div> <!-- rating-wrap.// -->
+
+                  <p th:text="${prod.getDescription().substring(0,100)}"> Take it as demo specs, ipsum dolor sit amet, consectetuer adipiscing elit, Lorem ipsum dolor sit amet, consectetuer adipiscing elit, Ut wisi enim ad minim veniam </p>
+                </div> <!-- info-main.// -->
+              </div> <!-- col.// -->
+              <aside class="col-sm-3">
+                <div class="info-aside">
+                  <div class="price-wrap">
+                    <span class="price h5" th:text="${prod.getPrice()}+#{currrency}"> $140 </span>
+                    <del class="price-old" th:text="${prod.getPrice()-1}+#{currrency}"> $198</del>
+                  </div> <!-- info-price-detail // -->
+                  <p class="text-success">Free shipping</p>
+                  <br>
+                  <p>
+                    <a th:href="@{/item/}+${prod.getName()}" href="#" class="btn btn-primary btn-block"> Details </a>
+                  </p>
+
+                  <form method="post" class="mt-1 fr1"   >
+                      <input type="hidden" th:value="${prod.getName()}"  name="prodName">
+                      <button  th:hidden="${#lists.contains(prodsIdsInCart,prod.getId())}"  id="edit" name="edit" class="btn btn-block btn-primary" th:text="#{add-to-cart}">Add to cart </button>
+                      <button th:hidden="${!#lists.contains(prodsIdsInCart,prod.getId())}" id="remove"  class="btn btn-block btn-warning" name="remove" th:text="#{remove-from-cart}">Remove from the cart</button>
+                  </form>
+                </div> <!-- info-aside.// -->
+              </aside> <!-- col.// -->
+            </div> <!-- row.// -->
+          </article> <!-- card-product .// -->
+
+
+          <nav  th:if="${pageNum>1}"  class="mt-4" aria-label="Page navigation sample">
+            <ul class="pagination">
+              <li th:class="${CurrentPage>1}?'page-item':'page-item disabled'"><a th:onclick="|onPaged(${CurrentPage-1})|" class="page-link" href="#">Previous</a></li>
+              <li  th:onclick="|onPaged(${pg})|" th:each="pg:${pages}" th:class="${CurrentPage==pg}?'page-item active':'page-item'"><a th:text="${pg}" href="#" class="page-link" >1</a></li>
+
+              <li  class="page-item"  ><a th:onclick="|onPaged(${CurrentPage+1})|" class="page-link" href="#">Next</a></li>
+            </ul>
+          </nav>
+
+        </main> <!-- col.// -->
+
+      </div>
+
+    </div> <!-- container .//  -->
+  </section>
+  <!-- ========================= SECTION CONTENT END// ========================= -->
+
+<style>
+  .activeCat{
+    background-color: lightgray;
+  }
+
+</style>
+<script>
+
+
+</script>
+<style>
+    .btn-block{
+        margin-top: 0.5rem;
+    }
+</style>
+</body>
+
+</html>

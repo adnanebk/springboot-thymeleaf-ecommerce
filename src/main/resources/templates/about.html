@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+
+      layout:decorate="~{master.html}"  >
+
+<head>
+
+    <title>About Shop Homepage</title>
+</head>
+
+<body layout:fragment="thebody" >
+
+<!-- Navigation -->
+<header th:replace="/master.html :: header"> </header>
+
+<!-- Page Content -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+                <div class="error-actions">
+                    <a th:href="@{/}" href="http://www.jquery2dotnet.com" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-home"></span>
+                        Take Me Home </a>
+
+                </div>
+                <br>
+                <br>
+                <h1>This Website is built with java 8,spring boot 2.1,tomcat 9, spring framework, hibernate, rest api,Oauth2 Social authentication, H2 database </h1>
+                <br>
+                <br>
+                <h2>These are some performance tests of the website :</h2>
+                <br>
+                <img th:src="@{/imgs/perf1.png}" alt=""/>
+                <img th:src="@{/imgs/perf2.png}" alt=""/>
+                <br>
+                <br>
+                <h2>These are some security tests of the website :</h2>
+                <br>
+                <img th:src="@{/imgs/sec1.png}" alt=""/>
+                <img th:src="@{/imgs/sec2.png}" alt=""/>
+                <img th:src="@{/imgs/sec3.png}" alt=""/>
+                <img th:src="@{/imgs/sec4.png}" alt=""/>
+                <img th:src="@{/imgs/sec5.png}" alt=""/>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- /.container -->
+
+<style>body { background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAYAAACpSkzOAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEgAACxIB0t1+/AAAABZ0RVh0Q3JlYXRpb24gVGltZQAxMC8yOS8xMiKqq3kAAAAcdEVYdFNvZnR3YXJlAEFkb2JlIEZpcmV3b3JrcyBDUzVxteM2AAABHklEQVRIib2Vyw6EIAxFW5idr///Qx9sfG3pLEyJ3tAwi5EmBqRo7vHawiEEERHS6x7MTMxMVv6+z3tPMUYSkfTM/R0fEaG2bbMv+Gc4nZzn+dN4HAcREa3r+hi3bcuu68jLskhVIlW073tWaYlQ9+F9IpqmSfq+fwskhdO/AwmUTJXrOuaRQNeRkOd5lq7rXmS5InmERKoER/QMvUAPlZDHcZRhGN4CSeGY+aHMqgcks5RrHv/eeh455x5KrMq2yHQdibDO6ncG/KZWL7M8xDyS1/MIO0NJqdULLS81X6/X6aR0nqBSJcPeZnlZrzN477NKURn2Nus8sjzmEII0TfMiyxUuxphVWjpJkbx0btUnshRihVv70Bv8ItXq6Asoi/ZiCbU6YgAAAABJRU5ErkJggg==);}
+.error-template {padding: 40px 15px;text-align: center;}
+.error-actions {margin-top:15px;margin-bottom:15px;}
+.error-actions .btn { margin-right:10px; }</style>
+
+</body>
+
+</html>

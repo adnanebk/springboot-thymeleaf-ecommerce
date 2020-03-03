@@ -1,0 +1,198 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+
+      layout:decorate="~{master.html}"  >
+
+<head>
+
+    <title>Orders page</title>
+</head>
+
+<body layout:fragment="thebody" >
+
+<!-- Navigation -->
+<header th:replace="/master.html :: header"> </header>
+
+<!-- ========================= SECTION PAGETOP ========================= -->
+<section class="section-pagetop bg">
+    <div class="container">
+        <h2 class="title-page" th:text="#{my-orders}">My orders</h2>
+    </div> <!-- container //  -->
+</section>
+<!-- ========================= SECTION INTRO END// ========================= -->
+
+
+<!-- Page Content -->
+<br>
+<br>
+<!-- Page Content -->
+<div class="container">
+    <div class="card shopping-cart">
+        <div class="card-body">
+<div class="container mb-4">
+    <div th:text="#{orders-no}" th:if="${cartlines==null}" class="alert alert-primary" role="alert">
+        There are no orders yet !
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Img</th>
+                        <th scope="col" th:text="#{product}">Product</th>
+                        <th scope="col" th:text="#{ordered-date}">Ordered date</th>
+                        <th scope="col" th:text="#{quantity}">Quantity</th>
+                        <th scope="col" class="text-center" th:text="#{price}">Price</th>
+                        <th th:text="#{shipping-infos}">Shipping infos</th>
+                        <th> </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:each="line:${cartlines}">
+                        <form method="post" th:action="@{/order/}">
+                            <input hidden="hidden" name="orderId" th:value="${line.getOrder().getId()}">
+                            <input hidden="hidden" name="lineId" th:value="${line.getId()}">
+                            <td><img class="img-"th:src="${line.getProduct().getImageUrl()}" width="auto" height="80" /> </td>
+                            <td class="text-center"><a th:text="${line.getProduct().getName()}" th:href="@{/item/}+${line.getProduct().getName()}"></a></td>
+
+                            <td class="text-left" th:text="${line.getOrder().orderedDate}"></td>
+                            <td class="text-center" th:text="${line.getQuantity()}"></td>
+                            <td  th:text="${line.getProduct().getPrice()}" class="text-center">124,90 €</td>
+                           <td class="" th:text="${line.getOrder().getFirstName()}+' '+${line.getOrder().getLastName()}+' / '+${line.getOrder().getAdresse()}+' / '+${line.getOrder().getCountry()}"></td>
+                            <td class=""><button name="remove" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> </button> </td>
+                        </form>
+                    </tr>
+
+
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><strong>Total</strong></td>
+                        <td class="text-right"><strong th:if="${total!=null}" th:text="${total}+'$'">0.0</strong></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- /.container -->
+
+        </div>
+        <div class="card-footer">
+            <div class="coupon col-md-5 col-sm-5 no-padding-left pull-left">
+                <!--    <div class="row">
+                        <div class="col-6">
+                            <input type="text" class="form-control" placeholder="cupone code">
+                        </div>
+                        <div class="col-6">
+                            <input type="submit" class="btn btn-default" value="Use cupone">
+                        </div>
+                    </div>-->
+            </div>
+            <div class="pull-right" style="margin: 10px">
+                <div th:if="${total}" class="pull-right" style="margin: 5px">
+                    Total price: <b th:text="${total}+'$'">0.00€</b>
+                </div>
+            </div>
+
+            <a th:text="#{continue-shopping}" th:href="@{/}" class="btn btn-outline-info btn pull-right">continue shopping</a>
+
+        </div>
+    </div>
+</div>
+<style>
+
+    .quantity {
+        float: left;
+        margin-right: 15px;
+        background-color: #eee;
+        position: relative;
+        width: 80px;
+        overflow: hidden
+    }
+
+    .quantity input {
+        margin: 0;
+        text-align: center;
+        width: 15px;
+        height: 15px;
+        padding: 0;
+        float: right;
+        color: #000;
+        font-size: 20px;
+        border: 0;
+        outline: 0;
+        background-color: #F6F6F6
+    }
+
+    .quantity input.qty {
+        position: relative;
+        border: 0;
+        width: 100%;
+        height: 40px;
+        padding: 10px 25px 10px 10px;
+        text-align: center;
+        font-weight: 400;
+        font-size: 15px;
+        border-radius: 0;
+        background-clip: padding-box
+    }
+
+    .quantity .minus, .quantity .plus {
+        line-height: 0;
+        background-clip: padding-box;
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 0;
+        -webkit-background-size: 6px 30px;
+        -moz-background-size: 6px 30px;
+        color: #bbb;
+        font-size: 20px;
+        position: absolute;
+        height: 50%;
+        border: 0;
+        right: 0;
+        padding: 0;
+        width: 25px;
+        z-index: 3
+    }
+
+    .quantity .minus:hover, .quantity .plus:hover {
+        background-color: #dad8da
+    }
+
+    .quantity .minus {
+        bottom: 0
+    }
+    .shopping-cart {
+        margin-top: 20px;
+    }
+
+     .container{
+         max-width: 100%;
+     }
+    .col-12{
+        padding: 0;
+    }
+
+    .card-body{
+        padding: 5px;
+    }
+</style>
+</body>
+
+</html>

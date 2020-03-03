@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+
+      layout:decorate="~{master.html}"  >
+
+<head>
+
+    <title>Registration page</title>
+</head>
+
+<body layout:fragment="thebody" >
+
+<!-- Navigation -->
+<header th:replace="/master.html :: header"> </header>
+
+<!-- Page Content -->
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-10 col-xl-9 mx-auto">
+            <div class="card card-signin flex-row my-5">
+                <div class="card-img-left d-none d-md-flex">
+                    <!-- Background image for card set in CSS! -->
+                </div>
+                <div class="card-body">
+                    <h5 th:text="#{register}" class="card-title text-center">Register</h5>
+                    <form class="form-signin" th:object="${user}" th:action="@{/register}" method="post">
+
+                        <!--   <ul th:if="${#fields.hasErrors('*')}">
+                               <li th:each="err : ${#fields.errors('Password')}"
+                                   th:text="${err}">Input is incorrect</li>
+                           </ul>-->
+                        <!--   <p th:if="${#fields.hasErrors('global')}" th:errors="*{glob}">
+                               Incorrect date
+                           </p>-->
+                        <ul th:if="${#fields.hasGlobalErrors()}">
+                            <li  class="validation-message" th:each="err : ${#fields.globalErrors()}"
+                                 th:text="${err}">Input is incorrect</li>
+                        </ul>
+                        <div class="form-label-group">
+                            <input type="text" th:field="*{username}" id="inputUserame" class="form-control" placeholder="Username" required autofocus>
+                            <label th:text="#{username}" for="inputUserame">Username</label>
+                            <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"
+                                  class="validation-message"></span>
+                        </div>
+
+                        <div class="form-label-group">
+                            <input th:field="*{email}" type="email" id="inputEmail" class="form-control" placeholder="Email address" required>
+                            <label th:text="#{email}" for="inputEmail">Email address</label>
+                            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"
+                                  class="validation-message"></span>
+                        </div>
+
+                        <hr>
+
+                        <div class="form-label-group">
+                            <input th:field="*{password}" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                            <label th:text="#{password}" for="inputPassword">Password</label>
+                        </div>
+
+                        <div class="form-label-group">
+                            <input type="password" th:field="*{matchPassword}"  id="inputConfirmPassword" class="form-control" placeholder="Password" required>
+                            <label th:text="#{confirm-password}" for="inputConfirmPassword">Confirm password</label>
+                            <p  th:if="${#fields.errors('MatchPassword').size()>0}"  th:text="${#fields.errors('MatchPassword').get(0)}"
+                                class="validation-message"></p>
+                        </div>
+
+                        <button th:text="#{register}" class="btn btn-lg btn-primary btn-block text-uppercase" type="submit">Register</button>
+                        <a th:text="#{sign-in}" class="d-block text-center mt-2 small" th:href="@{/login}">Sign In</a>
+                        <hr class="my-4">
+                        <!--
+                                                <button class="btn btn-lg btn-google btn-block text-uppercase" type="submit"><i class="fab fa-google mr-2"></i> Sign up with Google</button>
+                        -->
+                        <!--
+                                                <button class="btn btn-lg btn-facebook btn-block text-uppercase" type="submit"><i class="fab fa-facebook-f mr-2"></i> Sign up with Facebook</button>
+                        -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container -->
+
+
+<style>
+    /**
+ * Demo Styles
+ */
+
+    html {
+        height: 100%;
+        box-sizing: border-box;
+    }
+
+    *,
+    *:before,
+    *:after {
+        box-sizing: inherit;
+    }
+
+    body {
+        position: relative;
+        margin: 0;
+        padding-bottom: 6rem;
+        min-height: 100%;
+        /*font-family: "Helvetica Neue", Arial, sans-serif;*/
+    }
+
+
+
+    .demo h1 {
+        margin-top: 0;
+    }
+
+    /**
+     * Footer Styles
+     */
+
+    .footer {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: 1rem;
+        background-color: #efefef;
+        text-align: center;
+    }
+
+    :root {
+        --input-padding-x: 1.5rem;
+        --input-padding-y: .75rem;
+    }
+
+  /*  body {
+        background: #9CECFB;
+        !* fallback for old browsers *!
+        background: -webkit-linear-gradient(to right, #0052D4, #65C7F7, #9CECFB);
+        !* Chrome 10-25, Safari 5.1-6 *!
+        background: linear-gradient(to right, #0052D4, #65C7F7, #9CECFB);
+        !* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *!
+    }*/
+
+    .card-signin {
+        border: 0;
+        border-radius: 1rem;
+        box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        background: linear-gradient(to right,#76e6e1,#c0d9e6, #f0f0d2);
+    }
+
+    .card-signin .card-title {
+        margin-bottom: 2rem;
+        font-weight: 500;
+        font-size: 2rem;
+    }
+
+    .card-signin .card-img-left {
+        width: 45%;
+        /* Link to your background image using in the property below! */
+        background: scroll center url('https://source.unsplash.com/WEQbe2jBg40/414x512');
+        background-size: cover;
+    }
+
+    .card-signin .card-body {
+        padding: 2rem;
+    }
+
+    .form-signin {
+        width: 100%;
+    }
+
+    .form-signin .btn {
+        font-size: 80%;
+        border-radius: 5rem;
+        letter-spacing: .1rem;
+        font-weight: bold;
+        padding: 1rem;
+        transition: all 0.2s;
+    }
+
+    .form-label-group {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .form-label-group input {
+        border-radius: 2rem;
+    }
+
+    .form-label-group>input,
+    .form-label-group>label {
+        padding: var(--input-padding-y) var(--input-padding-x);
+    }
+
+    .form-label-group>label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: block;
+        width: 100%;
+        margin-bottom: 0;
+        /* Override default `<label>` margin */
+        line-height: 1.5;
+        color: #495057;
+        border: 1px solid transparent;
+        border-radius: .25rem;
+        transition: all .1s ease-in-out;
+    }
+
+    .form-label-group input::-webkit-input-placeholder {
+        color: transparent;
+    }
+
+    .form-label-group input:-ms-input-placeholder {
+        color: transparent;
+    }
+
+    .form-label-group input::-ms-input-placeholder {
+        color: transparent;
+    }
+
+    .form-label-group input::-moz-placeholder {
+        color: transparent;
+    }
+
+    .form-label-group input::placeholder {
+        color: transparent;
+    }
+
+    .form-label-group input:not(:placeholder-shown) {
+        padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+        padding-bottom: calc(var(--input-padding-y) / 3);
+    }
+
+    .form-label-group input:not(:placeholder-shown)~label {
+        padding-top: calc(var(--input-padding-y) / 3);
+        padding-bottom: calc(var(--input-padding-y) / 3);
+        font-size: 12px;
+        color: #777;
+    }
+
+    .btn-google {
+        color: white;
+        background-color: #ea4335;
+    }
+
+    .btn-facebook {
+        color: white;
+        background-color: #3b5998;
+    }
+    .validation-message{
+        color: darkred;
+    }
+</style>
+</body>
+
+</html>
+
+
+
+
+
+<script></script>
+</html>
+
