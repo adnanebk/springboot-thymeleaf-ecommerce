@@ -61,17 +61,13 @@ public class HomeController {
                           @RequestParam(defaultValue = "0") int min, @RequestParam(defaultValue = "0") int max) {
         List<Product> products;
         products= this.productService.GetFiltredProducts(prodSearch,cat,max,min);
-        double pageNum = (cat==null || cat.isEmpty())?StrictMath.ceil((double)products.size()/ 6):StrictMath.ceil((double)products.size()/ 6);
-        int[] pages =  IntStream.range(1, (int) pageNum+1).toArray();
-
-        if ((page-1) * 6 >= products.size()) {
+        int size=products.size();
+        if ((page-1) * 6 >= size) {
             page--;
         }
-            m.addAttribute("CurrentPage", page);
+       // m.addAttribute("CurrentPage", page);
         page--;
-
-
-           if(products.size()>0)
+        if(size>0)
             switch(sort) {
                 case "Name":
                     products= this.productService.GetPagingAndSortingProducts(products.stream(),page, Comparator.comparing(Product::getName));
@@ -84,6 +80,10 @@ public class HomeController {
                 default:
                     products=this.productService.GetPagingAndSortingProducts(products.stream(),page, null);
             }
+        double pageNum = (cat==null || cat.isEmpty())?StrictMath.ceil((double)size/ 6):StrictMath.ceil((double)size/ 6);
+        int[] pages =  IntStream.range(1, (int) pageNum+1).toArray();
+
+
 
 
 

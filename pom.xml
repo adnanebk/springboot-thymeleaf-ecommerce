@@ -131,7 +131,7 @@
                 <artifactId>heroku-maven-plugin</artifactId>
                 <version>2.0.16</version>
                 <configuration>
-                    <appName>adnaneshopping</appName>
+                    <appName>adnaneshop</appName>
                     <includeTarget>false</includeTarget>
                     <includes>
                         <include>${project.build.directory}/${project.build.finalName}.jar</include>

@@ -48,8 +48,8 @@ public class ApiProductController {
     ResourceLoader resourceLoader;
     private ProductService productService;
     //private ImageService imageService;
-    private boolean start = true;
-    //private CompletableFuture future;
+   // private boolean start = true;
+    private CompletableFuture future;
     //private Thread worker;
     //private ExecutorService executors= Executors.newSingleThreadExecutor();
 
@@ -68,25 +68,34 @@ public class ApiProductController {
     }
 
     @PostMapping({"/create"})
-    public ResponseEntity<?> create(@RequestBody @Valid ProductDto productDto, UriComponentsBuilder ucBuilder) throws ParseException {
+    public ResponseEntity<?> create(@RequestBody @Valid ProductDto productDto, UriComponentsBuilder ucBuilder)  {
         System.out.println("cccc");
-        Product product = this.productService.addAndConvertToEntity(productDto);
+        Product product = null;
+        try {
+            product = this.productService.addAndConvertToEntity(productDto);
+        } catch (ParseException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+        }
         //HttpHeaders headers = new HttpHeaders();
         //headers.setLocation(ucBuilder.path("/Product/{id}").buildAndExpand(product.getId()).toUri());
         return  ResponseEntity.created(ucBuilder.path("/Product/{id}").buildAndExpand(product.getId()).toUri()).build();
     }
 
     @PostMapping({"/image/create"})
-    public void createImages(@RequestParam("files") MultipartFile[] images) {
+    public ResponseEntity<?> createImages(@RequestParam("files") MultipartFile[] images) {
 
         //if (this.start) {
             //this.start = false;
 
-                try {
-                    productService.CreateProductImages(images);
-                } catch (IOException | InterruptedException e) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
-                }
+
+                   future.runAsync(()-> {
+                       try {
+                           productService.CreateProductImages(images);
+                       } catch (IOException | InterruptedException e) {
+                           e.printStackTrace();
+                       }
+        }) ;
+return ResponseEntity.ok().build();
         //}
      /*   if (this.start) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -98,7 +107,7 @@ public class ApiProductController {
 
     @GetMapping({"/products"})
     public ProductsPageDto getAllProducts(@RequestParam(defaultValue = "0") int page) {
-        this.start = true;
+        //this.start = true;
     return productService.getAllProductsInPage(page);
     }
 
@@ -117,7 +126,7 @@ public class ApiProductController {
         if (!Product.isPresent()) {
             return ResponseEntity.notFound().build();
         } else {
-            this.productService.RemoveProductById(id);
+            this.productService.RemoveProductById(Product.get());
             return  ResponseEntity.noContent().build();
         }
     }

@@ -17,6 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.annotation.processing.Filer;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -46,14 +48,12 @@ public class ImageService {
         return imageUrl;
     }
 
-   @Async
     public  void cleanResources( List<Product> products) throws IOException {
 
         String resoureString = resourceLoader.getResource("classpath:/static").getFile().getAbsolutePath() + "/uploadingDir/";
         // Stream paths = Files.walk(Paths.get(resoureString));
         List<String> prodUrls=   products.stream().
                 flatMap(p-> Stream.of(p.getImageUrl(),p.getImageUrl2(),p.getImageUrl3(),p.getImageUrl4())).collect(Collectors.toList());
-
         Files.list(Paths.get(resoureString)).
                 forEach(file-> {
 
@@ -86,9 +86,11 @@ public class ImageService {
                 if (fileName != null && !fileName.isEmpty()) {
                     final String finalResoureString = resoureString;
 
-                /*        URL url = new URL("http://slowwly.robertomurray.co.uk/delay/9000/url/http://www.google.co.uk");
+               /*       URL url = new URL("http://slowwly.robertomurray.co.uk/delay/9000/url/http://www.google.co.uk");
                         HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        con.setRequestMethod("GET");*/
+                        con.setRequestMethod("GET");
+                        con.getResponseCode();*/
+                        //Thread.sleep(7000);
                             uploadedFile.transferTo(Paths.get(finalResoureString));
 
 
@@ -97,7 +99,6 @@ public class ImageService {
 
 
         }
-        System.out.println("done");
     }
 
 

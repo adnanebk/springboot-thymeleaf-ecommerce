@@ -12,7 +12,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.servlet.LocaleResolver;
@@ -23,7 +25,8 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @SpringBootApplication
-@EnableCaching
+//@EnableCaching
+@EnableAsync
 public class Shop6Application implements WebMvcConfigurer {
     @Autowired
     MyInterceptor myInterceptor;
@@ -35,7 +38,10 @@ public class Shop6Application implements WebMvcConfigurer {
         SpringApplication.run(Shop6Application.class, args);
     }
 
-
+    @Bean
+    public CacheManager cacheManager() {
+        return new ConcurrentMapCacheManager("prod","cat","prodfiltred","prodpaged"); // Cache Vendor
+    }
 
     @Bean
     public LocaleResolver localeResolver() {

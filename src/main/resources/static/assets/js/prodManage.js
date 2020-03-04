@@ -327,9 +327,6 @@ function updateServer(form,formData, productmodel, displayError,methodType) {
         contentType: false,
         cache: false,
         data: formData,
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader(header, token);
-        },
         success: function () {
             $.ajax({
                 type: methodType,

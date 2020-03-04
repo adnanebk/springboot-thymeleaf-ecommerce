@@ -21,10 +21,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.hibernate.annotations.Cache;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +59,10 @@ public class ProductService {
         return this.categoryRepo.getAll();
     }
     @CachePut("prod")
+    @Caching(evict = {
+            @CacheEvict(value = {"prodfiltred","prodpaged"},allEntries = true),
+            @CacheEvict(value = "prodsearch",key = "product.name")
+    })
     public List<Product> AddNewProduct(Product product) {
         List<Product> products=productRepo.getAll();
         boolean match=products.stream().anyMatch((p) -> p.getId() == product.getId());
@@ -81,20 +87,26 @@ public class ProductService {
     }
 
     @CachePut("prod")
-    @CacheEvict(value = {"prodinpage","filtredprods","pagedprods"},allEntries = true)
-    public List<Product> RemoveProductById(int id) {
-        this.productRepo.deleteById(id);
+    @Caching(evict = {
+            @CacheEvict(value = {"prodfiltred","prodpaged"},allEntries = true),
+            @CacheEvict(value = "prodsearch",key = "product.name")
+    })
+    public List<Product> RemoveProductById(Product product) {
+        this.productRepo.deleteById(product.getId());
         List<Product> products=this.productRepo.getAll();
-        products.removeIf(p -> p.getId() == id);
+        products.removeIf(p -> p.getId() == product.getId());
 
        return products;
     }
 
+   @Cacheable("prodsearch")
     public Product Getproduct(String prodName) {
         return this.productRepo.getAll().stream().filter((p) -> p.getName().equals(prodName)).findFirst().orElse(null);
     }
 
-    @Cacheable("pagedprods")
+
+
+    @Cacheable("prodpaged")
     public List<Product> GetPagingAndSortingProducts(Stream<Product> products,int page, Comparator<Product> comparator) {
 
           return comparator == null ? products.skip((page * 6)).limit(6).collect(Collectors.toList()) : products.sorted(comparator).skip((page * 6)).limit(6).collect(Collectors.toList());
@@ -104,7 +116,7 @@ public class ProductService {
 
 
 
-   @Cacheable("filtredprods")
+    @Cacheable("prodfiltred")
     public List<Product> GetFiltredProducts(String search, String cat,int max,int min) {
         Stream<Product> filtredProds=this.productRepo.getAll().stream();
         if(search!=null && !search.isEmpty())
@@ -115,6 +127,7 @@ public class ProductService {
         return  filtredProds.filter((p) -> p.getCategory().getName().equals(cat)).collect(Collectors.toList());
         else
         return filtredProds.collect(Collectors.toList());
+
     }
 
     public ProductDto convertToDto(Product product) {
@@ -123,7 +136,7 @@ public class ProductService {
         return productDto;
     }
 
-    @CacheEvict(value = {"prodinpage","filtredprods","pagedprods"},allEntries = true)
+
     public Product addAndConvertToEntity(ProductDto productDto) throws ParseException {
         Product product = modelMapper.map(productDto, Product.class);
         Category category = GetAllCategories().stream().filter((c) -> c.getName().equals(productDto.getCategoryName())).findFirst().get();
@@ -141,8 +154,6 @@ public class ProductService {
     }
 
 
-
-   @Cacheable("prodinpage")
     public ProductsPageDto getAllProductsInPage(int page){
         List<ProductDto> productsDto = GetAllProducts().stream().map((p) -> convertToDto(p)).skip((page * 5)).limit(5).collect(Collectors.toList());
         ProductsPageDto productsPageDto = new ProductsPageDto();
@@ -155,6 +166,7 @@ public class ProductService {
 
 
     public void CreateProductImages(MultipartFile[] images) throws IOException, InterruptedException {
+        if(images.length>0)
         imageService.CreateImages(images);
     }
 }
