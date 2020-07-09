@@ -43,30 +43,7 @@ public class CartController {
         return "cart2";
     }
 
-/*
-    @PostMapping(
-            value = {"/item/{prod}"},
-            params = {"edit"}
-    )
-    public String AddOrUpdateCartLine(@PathVariable(name = "prod") String prodName, HttpSession session, HttpServletRequest request) {
-        int quantity = Integer.valueOf(request.getParameter("quantity"));
-        String redirect = request.getParameter("redirect");
-        Optional<Product> product = this.productRepo.getAll().stream().filter(p->p.getName().equalsIgnoreCase(prodName)).findFirst();
-        this.cart.AddItem((Product)product.get(), quantity, session);
-        return redirect != null && !redirect.isEmpty() ? "redirect:/" : "redirect:/item/" + prodName;
-    }
 
-    @PostMapping(
-            value = {"/item/{prod}"},
-            params = {"remove"}
-    )
-    public String RemoveCartLine(@PathVariable(name = "prod") String prodName, HttpSession session, HttpServletRequest request) {
-        String redirect = request.getParameter("redirect");
-        Optional<Product> product = this.productRepo.getAll().stream().filter(p->p.getName().equalsIgnoreCase(prodName)).findFirst();
-        this.cart.RemoveLine((Product)product.get(), session);
-        return redirect != null && !redirect.isEmpty() ? "redirect:/" : "redirect:/item/" + prodName;
-    }
-*/
 
     @PostMapping(
             value = {"/cart/{prod}"},
@@ -84,13 +61,13 @@ public class CartController {
     )
     public String EditCartLine2(@PathVariable(name = "prod") String prodName, HttpSession session,@RequestParam(defaultValue = "1") int quantity) {
         Optional<Product> product = this.productRepo.getAll().stream().filter(p->p.getName().equalsIgnoreCase(prodName)).findFirst();
-        this.cart.AddItem((Product)product.get(), quantity, session);
+        this.cart.AddItem(product.get(), quantity, session);
         return "redirect:/cart";
     }
 
     @PostMapping({"/api/item"})
     @ResponseBody
-    public ResponseEntity AddOrUpdateCartLineApi(@RequestBody String prodName, HttpSession session, @RequestParam(value = "quantity",defaultValue = "1") int quantity) {
+    public ResponseEntity<?> AddOrUpdateCartLineApi(@RequestBody String prodName, HttpSession session, @RequestParam(value = "quantity",defaultValue = "1") int quantity) {
         Optional<Product> product = this.productRepo.getAll().stream().filter(p->p.getName().equalsIgnoreCase(prodName)).findFirst();
         List<CartLine> cartlines = this.cart.GetCartLines();
         if (cartlines.stream().anyMatch((c) -> c.getProduct().getName().equals(prodName))) {
@@ -104,9 +81,9 @@ public class CartController {
 
     @GetMapping({"/api/item/remove/{prod}"})
     @ResponseBody
-    public ResponseEntity RemoveCartLineApi(@PathVariable("prod") String prodName, HttpSession session) {
+    public ResponseEntity<?> RemoveCartLineApi(@PathVariable("prod") String prodName, HttpSession session) {
         Optional<Product> product = this.productRepo.getAll().stream().filter(p->p.getName().equalsIgnoreCase(prodName)).findFirst();
-        this.cart.RemoveLine((Product)product.get(), session);
+        product.ifPresent(value -> this.cart.RemoveLine(value, session));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     @PostMapping({"/api/testpost"})

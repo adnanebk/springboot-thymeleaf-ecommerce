@@ -30,7 +30,13 @@
         <div class="table-title">
             <div class="row">
                 <div class="col-sm-6">
-                    <h2>Manage <b>Products</b></h2>
+                    <h2>Asynchronous Rest api Products management system</h2>
+                    <div  id="Progg" style="display: none" >
+                        <div  class="spinner-border text-secondary" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <span>Wait for Editing...</span>
+                    </div>
                 </div>
                 <div class="col-sm-6 p">
                     <a href="#addItemModal" id="addnewbtn" class="btn btn-success" data-toggle="modal"><i class="material-icons">&#xE147;</i> <span>Add product</span></a>
@@ -44,7 +50,10 @@
             </div>
         </div>
 
-        <table class="table table-dark table-hover">
+        <div class="alert alert-danger" id="GlobalError"></div>
+
+
+        <table class="table table-dark table-hover table-responsive">
             <thead>
             <tr>
                 <th>Actions</th>
@@ -82,7 +91,7 @@
                     <div class="form-group">
                         <label>Name</label>
                         <input id="cat-name" type="text" class="form-control" required>
-                        <span id="catErr0" style="color: red; display: none" >This Category is already created</span>
+                        <span id="catErr0" style="color: red; display: none" >Can't add this category</span>
                     </div>
                     <div class="form-group">
                         <label>Description</label>
@@ -112,24 +121,27 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Name</label>
-                        <input id="add-item1" type="text" class="form-control" required>
+                        <input id="add-item1" type="text" class="form-control" >
                     </div>
                     <div class="form-group">
                         <label>Description</label>
-                        <textarea id="add-item2" type="email" class="form-control" required></textarea>
+                        <textarea id="add-item2" type="email" class="form-control" ></textarea>
                     </div>
                     <div class="form-group">
                         <label>Price</label>
-                        <input id="add-item3"  pattern="[0-9]+([\.,][0-9]+)?" type="text" class="form-control" required>
+                        <input id="add-item3"
+                               value="0"
+                               pattern="[0-9]+([\.,][0-9]+)?"
+                               type="text" class="form-control" >
                     </div>
                     <label>Category</label>
-                    <select required="required" class="form-control add-cats">
+                    <select  class="form-control add-cats">
                         <option selected="selected" value="">Choose...</option>
                         <!--<option  th:each="cat:${categories}" th:text="${cat.getName()}"  th:value="${cat.getId()}">...</option>-->
                     </select>
                     <div class="form-group">
                         <label>Image utl(1)</label>
-                        <input id="add-item4"type="text" placeholder="Image url (you can past an external url)"  class="form-control" required>
+                        <input id="add-item4"type="text" placeholder="Image url (you can past an external url)"  class="form-control" >
                         <input id="fileInput1" type="file" class="brn" name="uploadingFiles"  >
                         <label for="fileInput1" />choose a file</label>
                         <span id="err1"></span>
@@ -164,7 +176,7 @@
                         <span>Uploading...</span>
                     </div>
                     <input type="submit" class="btn btn-success" id="addbtn" value="Add">
-                    <input type="button" class="btn btn-warning" data-dismiss="modal"  onclick="cancelP()" value="Cancel Operation">
+                    <input type="button" class="btn btn-danger" onclick="cancelP()"  value="Cancel">
                 </div>
             </form>
         </div>
@@ -186,7 +198,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label>Name</label>
-                        <input id="item1" type="text" class="form-control" required>
+                        <input id="item1" type="text" class="form-control" required >
                     </div>
                     <div class="form-group">
                         <label>Description</label>
@@ -239,8 +251,7 @@
                         <span>Loading...</span>
                     </div>
                     <input type="submit" id="editBtn" class="btn btn-info" value="Save">
-                    <input type="button" class="btn btn-danger" data-dismiss="modal" onclick="cancelP()" value="Cancel Operation">
-
+                    <input type="button" class="btn btn-danger" onclick="cancelP()"  value="Cancel">
                 </div>
             </form>
         </div>
@@ -530,7 +541,7 @@ thead{
         text-align: center;
     }
     .container{
-        max-width: fit-content;
+        //min-width: max-content;
         padding: 0px;
     }
     [type="file"] {

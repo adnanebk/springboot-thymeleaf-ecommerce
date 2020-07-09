@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+
+import org.bouncycastle.util.Iterable;
+import org.modelmapper.internal.util.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,20 +62,16 @@ public class OrderController {
             }
 
             if (user != null) {
-                List<CartLine> cartlines = (List)user.getOrders().stream().flatMap((o) -> {
-                    return o.getCartLines().stream();
-                }).collect(Collectors.toList());
-                if (cartlines != null && cartlines.size() > 0) {
+                List<CartLine> cartlines = user.getOrders().stream().flatMap((o) -> o.getCartLines().stream()).collect(Collectors.toList());
+                if (cartlines.size() > 0) {
                     m.addAttribute("cartlines", cartlines);
-                    m.addAttribute("total", cartlines.stream().mapToDouble((c) -> {
-                        return (double)c.getQuantity() * c.getProduct().getPrice();
-                    }).sum());
+                    m.addAttribute("total", cartlines.stream().mapToDouble((c) -> (double)c.getQuantity() * c.getProduct().getPrice()).sum());
                 }
 
-                m.addAttribute("active", "order");
             }
-        }
 
+        }
+        m.addAttribute("active", "order");
         return "orders";
     }
 
@@ -87,14 +86,12 @@ public class OrderController {
             return "redirect:/";
         } else {
             if (productName != null && qt != null) {
-                Product product = (Product)this.productService.GetAllProducts().stream().filter((p) -> {
-                    return p.getName().equals(productName);
-                }).findFirst().orElse(null);
+                Product product = this.productService.GetAllProducts().stream().filter((p) -> p.getName().equals(productName)).findFirst().orElse(null);
                 if (product != null) {
                     m.addAttribute("product", product);
-                    m.addAttribute("total", product.getPrice() * (double)Integer.valueOf(qt));
+                    m.addAttribute("total", product.getPrice() * (double)Integer.parseInt(qt));
                     this.cartLine = new CartLine();
-                    this.cartLine.setQuantity(Integer.valueOf(qt));
+                    this.cartLine.setQuantity(Integer.parseInt(qt));
                     this.cartLine.setProduct(product);
                 }
             } else {
@@ -130,13 +127,13 @@ public class OrderController {
 
             order.setUser(user);
             if (this.cartLine != null) {
-                CartLine SavedCartline = (CartLine)this.cartLineRepo.save(this.cartLine);
+                CartLine SavedCartline = this.cartLineRepo.save(this.cartLine);
                 order.setCartLine(SavedCartline);
                 this.orderRepo.save(order);
                 this.cartLine = null;
             } else {
                 if (this.cartLines != null) {
-                    List<CartLine> cartLineList = (List)this.cartLineRepo.saveAll(this.cartLines);
+                    List<CartLine> cartLineList =  this.cartLineRepo.saveAll(this.cartLines);
                     order.setAllCartLines(cartLineList);
                     this.orderRepo.save(order);
                     session.removeAttribute("cartlines");
@@ -155,7 +152,7 @@ public class OrderController {
     )
     public String RemoveOrder(@RequestParam(name = "orderId") Integer orderId, @RequestParam(name = "lineId") Integer lineId) {
         this.cartLineRepo.deleteById(lineId);
-        if (((Order)this.orderRepo.findById(orderId).get()).getCartLines() == null || ((Order)this.orderRepo.findById(orderId).get()).getCartLines().size() == 0) {
+        if (this.orderRepo.findById(orderId).get().getCartLines() == null || this.orderRepo.findById(orderId).get().getCartLines().size() == 0) {
             this.orderRepo.deleteById(orderId);
         }
 

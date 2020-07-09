@@ -11,4 +11,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface CartLineRepo extends CrudRepository<CartLine, Integer> {
     List<CartLine> findAll();
+
+    @Override
+    <S extends CartLine> List<S> saveAll(Iterable<S> iterable);
 }

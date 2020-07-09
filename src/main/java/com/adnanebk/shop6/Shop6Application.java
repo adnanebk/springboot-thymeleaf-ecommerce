@@ -8,6 +8,8 @@ package com.adnanebk.shop6;
 import com.adnanebk.shop6.Services.MyInterceptor;
 import java.util.Locale;
 import javax.servlet.Filter;
+
+import com.github.ziplet.filter.compression.CompressingFilter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -25,7 +27,7 @@ import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 @SpringBootApplication
-//@EnableCaching
+@EnableCaching
 @EnableAsync
 public class Shop6Application implements WebMvcConfigurer {
     @Autowired
@@ -38,9 +40,19 @@ public class Shop6Application implements WebMvcConfigurer {
         SpringApplication.run(Shop6Application.class, args);
     }
 
+
+
+
+   @Bean
+    public Filter compressingFilter() {
+        CompressingFilter compressingFilter = new CompressingFilter();
+        return compressingFilter;
+    }
+
+
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("prod","cat","prodfiltred","prodpaged"); // Cache Vendor
+        return new ConcurrentMapCacheManager("prod","cat"); // Cache Vendor
     }
 
     @Bean
@@ -63,7 +75,7 @@ public class Shop6Application implements WebMvcConfigurer {
     }
 
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(this.myInterceptor).excludePathPatterns(new String[]{"/assets/**", "/error/**", "/error", "/imgs/**", "/productApi/**","/uploadingDir/**"});
+       registry.addInterceptor(this.myInterceptor).excludePathPatterns("/assets/**", "/error/**", "/error", "/imgs/**", "/productApi/**","/uploadingDir/**","/api/**");
         registry.addInterceptor(this.localeChangeInterceptor());
     }
 

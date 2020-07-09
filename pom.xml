@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.4.RELEASE</version>
+        <version>2.2.5.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.adnanebk.shop6</groupId>
@@ -40,11 +40,6 @@
 
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-tomcat -->
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-tomcat -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -109,12 +104,13 @@
             <version>1.4</version>
         </dependency>
 
+
         <!-- https://mvnrepository.com/artifact/com.github.ziplet/ziplet -->
-  <!--      <dependency>
+      <dependency>
             <groupId>com.github.ziplet</groupId>
             <artifactId>ziplet</artifactId>
             <version>2.4.1</version>
-        </dependency>-->
+        </dependency>
 
     </dependencies>
 
@@ -126,23 +122,6 @@
             </plugin>
 
             <!-- Heroku Maven Plugin Configuration -->
-            <plugin>
-                <groupId>com.heroku.sdk</groupId>
-                <artifactId>heroku-maven-plugin</artifactId>
-                <version>2.0.16</version>
-                <configuration>
-                    <appName>adnaneshop</appName>
-                    <includeTarget>false</includeTarget>
-                    <includes>
-                        <include>${project.build.directory}/${project.build.finalName}.jar</include>
-                    </includes>
-                    <jdkVersion>${java.version}</jdkVersion>
-                    <processTypes>
-                        <web>java $JAVA_OPTS -jar ${project.build.directory}/${project.build.finalName}.jar</web>
-
-                    </processTypes>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 

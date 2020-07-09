@@ -44,43 +44,25 @@ public class HomeController {
         this.imageService = imageService;
     }
 
-/*    @RequestMapping({"changeView/{view}"})
-    public String ChangeView(HttpSession session, @PathVariable(name = "view",required = false) String view) {
-        if (view == null) {
-            view = "grid";
-        }
-
-        session.setAttribute("view", view);
-        return "redirect:/";
-    }*/
 
     @RequestMapping("/")
     public String Welcome(Model m, @RequestParam(defaultValue = "Newest") String sort, @RequestParam(defaultValue = "1") int page,
                           @RequestParam(required = false) String cat,@RequestParam(defaultValue = "grid") String view,
                           @RequestParam(name = "search",required = false) String prodSearch,
-                          @RequestParam(defaultValue = "0") int min, @RequestParam(defaultValue = "0") int max) {
+                          @RequestParam(defaultValue = "0") int min, @RequestParam(defaultValue = "0") int max,
+                          @RequestParam(defaultValue = "6") int pageSize) {
         List<Product> products;
         products= this.productService.GetFiltredProducts(prodSearch,cat,max,min);
         int size=products.size();
-        if ((page-1) * 6 >= size) {
+        if ((page-1) * pageSize >= size) {
             page--;
         }
-       // m.addAttribute("CurrentPage", page);
+        m.addAttribute("CurrentPage", page);
         page--;
         if(size>0)
-            switch(sort) {
-                case "Name":
-                    products= this.productService.GetPagingAndSortingProducts(products.stream(),page, Comparator.comparing(Product::getName));
-                    break;
-                case "LowPrice":
-                    products=this.productService.GetPagingAndSortingProducts(products.stream(),page, Comparator.comparing(Product::getPrice));
-                    break;
-                case "HighPrice":
-                    products=this.productService.GetPagingAndSortingProducts(products.stream(),page, Comparator.comparing(Product::getPrice).reversed());
-                default:
-                    products=this.productService.GetPagingAndSortingProducts(products.stream(),page, null);
-            }
-        double pageNum = (cat==null || cat.isEmpty())?StrictMath.ceil((double)size/ 6):StrictMath.ceil((double)size/ 6);
+            products= this.productService.GetPagingAndSortingProducts(products.stream(),page, sort,pageSize);
+
+        double pageNum = StrictMath.ceil((double)size/ pageSize);
         int[] pages =  IntStream.range(1, (int) pageNum+1).toArray();
 
 
@@ -117,8 +99,8 @@ public class HomeController {
         if (cartlines != null && product != null) {
             Optional<CartLine> cartLine = cartlines.stream().filter((c) -> c.getProduct().getId() == product.getId()).findFirst();
             if (cartLine.isPresent()) {
-                m.addAttribute("quantity", ((CartLine)cartLine.get()).getQuantity());
-                m.addAttribute("total", (double)((CartLine)cartLine.get()).getQuantity() * product.getPrice());
+                m.addAttribute("quantity", (cartLine.get()).getQuantity());
+                m.addAttribute("total", (double)(cartLine.get()).getQuantity() * product.getPrice());
             }
         }
 

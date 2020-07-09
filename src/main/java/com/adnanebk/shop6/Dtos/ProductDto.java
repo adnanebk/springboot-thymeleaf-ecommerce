@@ -5,15 +5,29 @@
 
 package com.adnanebk.shop6.Dtos;
 
+import org.springframework.format.annotation.NumberFormat;
+
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
 public class ProductDto {
+    @NotEmpty(message = "the name must not be empty")
     private String name;
+
     private int id;
+    @NotEmpty(message = "the description must not be empty")
     private String description;
+
+    @Min(value = 10,message = "the price must be greater or equal to 10")
     private double price;
+    @NotEmpty(message = "Image url 1 is required")
     private String imageUrl;
     private String imageUrl2;
     private String imageUrl3;
     private String imageUrl4;
+    @NotEmpty(message = "You must choose a category ")
     private String categoryName;
 
     public int getId() {

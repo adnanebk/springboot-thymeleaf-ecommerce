@@ -48,6 +48,7 @@ public class ImageService {
         return imageUrl;
     }
 
+   @Async
     public  void cleanResources( List<Product> products) throws IOException {
 
         String resoureString = resourceLoader.getResource("classpath:/static").getFile().getAbsolutePath() + "/uploadingDir/";
@@ -71,9 +72,9 @@ public class ImageService {
     }
 
 
-    @Async
-    public void CreateImages(MultipartFile[] images) throws IOException, InterruptedException {
-        String resoureString = null;
+
+    public void CreateImages(MultipartFile[] images) throws IOException {
+        String resoureString;
         MultipartFile[] var3 = images;
         int var4 = images.length;
 
@@ -84,18 +85,8 @@ public class ImageService {
                 String dir = resourceLoader.getResource("classpath:/static").getFile().getAbsolutePath();
                 resoureString = dir + "/uploadingDir/" + fileName;
                 if (fileName != null && !fileName.isEmpty()) {
-                    final String finalResoureString = resoureString;
-
-               /*       URL url = new URL("http://slowwly.robertomurray.co.uk/delay/9000/url/http://www.google.co.uk");
-                        HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                        con.setRequestMethod("GET");
-                        con.getResponseCode();*/
-                        //Thread.sleep(7000);
-                            uploadedFile.transferTo(Paths.get(finalResoureString));
-
-
+                            uploadedFile.transferTo(Paths.get(resoureString));
                 }
-
 
 
         }

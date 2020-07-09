@@ -27,9 +27,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ProductService {
@@ -48,7 +51,6 @@ public class ProductService {
     }
 
     public List<Product> GetAllProducts() {
-        //return this.products;
         return  this.productRepo.getAll();
     }
 
@@ -58,65 +60,68 @@ public class ProductService {
     public List<Category> GetAllCategories() {
         return this.categoryRepo.getAll();
     }
+
+
     @CachePut("prod")
-    @Caching(evict = {
-            @CacheEvict(value = {"prodfiltred","prodpaged"},allEntries = true),
-            @CacheEvict(value = "prodsearch",key = "product.name")
-    })
     public List<Product> AddNewProduct(Product product) {
         List<Product> products=productRepo.getAll();
-        boolean match=products.stream().anyMatch((p) -> p.getId() == product.getId());
+        boolean match=productRepo.getAll().stream().anyMatch((p) -> p.getId() == product.getId());
 
         if(!match)
         {
             products.add(0,this.productRepo.save(product));
         }
-        else
-            products.forEach(p->{
-                if(p.getId()==product.getId())
-                    products.set(products.indexOf(p),productRepo.save(product));
-            });
+        else {
+            for (Product p : products) {
+                if (p.getId() == product.getId())
+                    products.set(products.indexOf(p), productRepo.save(product));
+            }
+        }
         return products;
     }
 
     @CachePut("cat")
     public List<Category> AddNewCategory(Category cat) {
+        if(categoryRepo.existsById(cat.getName()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"this category is already exist");
          List<Category> categories=categoryRepo.getAll();
              categories.add(this.categoryRepo.save(cat));
              return categories;
     }
 
+
     @CachePut("prod")
-    @Caching(evict = {
-            @CacheEvict(value = {"prodfiltred","prodpaged"},allEntries = true),
-            @CacheEvict(value = "prodsearch",key = "product.name")
-    })
-    public List<Product> RemoveProductById(Product product) {
-        this.productRepo.deleteById(product.getId());
+    public List<Product> RemoveProduct(int id) {
+        this.productRepo.deleteById(id);
         List<Product> products=this.productRepo.getAll();
-        products.removeIf(p -> p.getId() == product.getId());
+        products.removeIf(p -> p.getId() == id);
 
        return products;
     }
 
-   @Cacheable("prodsearch")
     public Product Getproduct(String prodName) {
         return this.productRepo.getAll().stream().filter((p) -> p.getName().equals(prodName)).findFirst().orElse(null);
     }
 
 
 
-    @Cacheable("prodpaged")
-    public List<Product> GetPagingAndSortingProducts(Stream<Product> products,int page, Comparator<Product> comparator) {
 
-          return comparator == null ? products.skip((page * 6)).limit(6).collect(Collectors.toList()) : products.sorted(comparator).skip((page * 6)).limit(6).collect(Collectors.toList());
+    public List<Product> GetPagingAndSortingProducts(Stream<Product> products,int page, String sort, int pageSize) {
+
+
+        Comparator<Product> comparator =
+                sort.equalsIgnoreCase("name") ? Comparator.comparing(Product::getName):
+                        sort.equalsIgnoreCase("lowprice") ?Comparator.comparing(Product::getPrice):
+                                sort.equalsIgnoreCase("highprice") ? Comparator.comparing(Product::getPrice).reversed():null;
+
+        if (comparator == null)
+            return products.skip((page * pageSize)).limit(pageSize).collect(Collectors.toList());
+
+        return products.sorted(comparator).skip((page * pageSize)).limit(pageSize).collect(Collectors.toList());
 
     }
 
 
-
-
-    @Cacheable("prodfiltred")
     public List<Product> GetFiltredProducts(String search, String cat,int max,int min) {
         Stream<Product> filtredProds=this.productRepo.getAll().stream();
         if(search!=null && !search.isEmpty())
@@ -127,7 +132,6 @@ public class ProductService {
         return  filtredProds.filter((p) -> p.getCategory().getName().equals(cat)).collect(Collectors.toList());
         else
         return filtredProds.collect(Collectors.toList());
-
     }
 
     public ProductDto convertToDto(Product product) {
@@ -155,7 +159,7 @@ public class ProductService {
 
 
     public ProductsPageDto getAllProductsInPage(int page){
-        List<ProductDto> productsDto = GetAllProducts().stream().map((p) -> convertToDto(p)).skip((page * 5)).limit(5).collect(Collectors.toList());
+        List<ProductDto> productsDto = this.productRepo.getAll().stream().map((p) -> convertToDto(p)).skip((page * 5)).limit(5).collect(Collectors.toList());
         ProductsPageDto productsPageDto = new ProductsPageDto();
         productsPageDto.setProductsDto(productsDto);
         productsPageDto.setCategories(GetAllCategories().stream().map((c) -> c.getName()).collect(Collectors.toList()));
@@ -165,8 +169,19 @@ public class ProductService {
     }
 
 
-    public void CreateProductImages(MultipartFile[] images) throws IOException, InterruptedException {
-        if(images.length>0)
-        imageService.CreateImages(images);
+
+
+    public void CreateProductImages(MultipartFile[] images) {
+
+        if(images.length>0) {
+            try {
+                imageService.CreateImages(images);
+            } catch (IOException e) {
+                throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,e.getMessage());
+
+            }
+        }
     }
+
+
 }

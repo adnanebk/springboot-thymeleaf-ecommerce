@@ -1,8 +1,4 @@
 
-//let domainUrl="https://adnane-shop.herokuapp.com/";
-//let baseurl="https://adnane-shop.herokuapp.com/productApi/";
-let domainUrl="https://localhost:8080/";
-let baseurl="https://localhost:8080/productApi/";
 
 //let token = document.getElementById('_csrf').getAttribute('content');
 //let token = $("input[name='_csrf']").val();
@@ -41,10 +37,11 @@ function cancelP() {
     })*/
 let form=$("#myform");
 let form2=$("#myform2");
-    form.find("div[class='addProg']").hide();
-    form.find("input[type='submit']").show();
+    form.parent().parent().parent().modal('hide');
+    form2.parent().parent().parent().modal('hide');
+  /*  form.find("div[class='addProg']").hide();
     form2.find("div[class='addProg']").hide();
-    form2.find("input[type='submit']").show();
+    $("#Progg").hide();*/
 }
 
 
@@ -57,16 +54,16 @@ function SetId(k){
     $("#err12").text("");
     $("#err13").text("");
     $("#err14").text("");
-    $("#EditError").hide();
-    $("#AddError").hide();
+    //$("#EditError").hide();
+   // $("#AddError").hide();
     $("#item0").val(items[k].id);
     $("#item1").val(items[k].name);
     $("#item2").val(items[k].description);
     $("#item3").val(items[k].price);
-    $("#item4").val(items[k].imageUrl);
-    $("#item5").val(items[k].imageUrl2);
-    $("#item6").val(items[k].imageUrl3);
-    $("#item7").val(items[k].imageUrl4);
+    $("#item4").val(items[k].imageUrl.replace("/uploadingDir/",""));
+    $("#item5").val(items[k].imageUrl2.replace("/uploadingDir/",""));
+    $("#item6").val(items[k].imageUrl3.replace("/uploadingDir/",""));
+    $("#item7").val(items[k].imageUrl4.replace("/uploadingDir/",""));
     $(".cats").val(items[k].categoryName);
     prodId= items[k].id;
 }
@@ -90,15 +87,16 @@ function prevv() {
     }
 }
 function  getall() {
-
     let markup="";
     $.ajax({
-        url: "/productApi/products?page="+_page,
+        contentType: "application/json",
+        url: "/api/products?page="+_page,
         error:function (e) {
             console.log("ERROR: ");
             console.log(e);
         }
     }).then(function(data) {
+        console.log("data : ",data);
         items=data.productsDto;
         prodCount=data.prodCount;
         prodLimit=data.prodLimit;
@@ -141,7 +139,8 @@ $("#myform").submit(function (event) {
     // Prevent the form from submitting via the browser.
     event.preventDefault();
     ajaxPost($("#myform"));
-    $("#AddError").hide();
+    //$("#AddError").hide();
+    $("#GlobalError").hide();
 });
 $("#myformcat").submit(function (event) {
     // Prevent the form from submitting via the browser.
@@ -153,6 +152,8 @@ $("#myform2").submit(function (event) {
     // Prevent the form from submitting via the browser.
     event.preventDefault();
     ajaxPut($("#myform2"));
+    //$("#EditError").hide();
+    $("#GlobalError").hide();
 });
 
 
@@ -171,7 +172,7 @@ function ajaxPostCat() {
     $.ajax({
         type : "POST",
         contentType : "application/json",
-        url :"/productApi/category/create",
+        url :"/api/categories",
         data : JSON.stringify(productmodel),
         beforeSend: function( xhr ) {
             xhr.setRequestHeader(header, token);
@@ -181,6 +182,9 @@ function ajaxPostCat() {
             getall()
         },
         error : function(e) {
+            if(e.responseJSON.message!==undefined)
+             $("#catErr0").text(e.responseJSON.message);
+
             $("#catErr0").show();
             console.log("ERROR: ", e);
         }
@@ -231,12 +235,11 @@ function ajaxPost(form) {
             categoryName :$(".add-cats").find(":selected").val(),
         };
 
-        let displayError=$("#AddError");
-        form.find("input[type='submit']").hide();
+        //let displayError=$("#AddError");
         form.find("div[class='addProg']").show();
-        updateServer(form,formData, productmodel, displayError,"POST");
+        $("#Progg").show();
+        updateServer(form,formData, productmodel,"POST");
     }
-
 
 }
 
@@ -263,8 +266,8 @@ function ajaxPut(form) {
 
     if(!isError)
     {
-        form.find("input[type='submit']").hide();
         form.find("div[class='addProg']").show();
+        $("#Progg").show();
         let productmodel = {
             id : $("#item0").val(),
             name : $("#item1").val(),
@@ -276,8 +279,10 @@ function ajaxPut(form) {
             imageUrl4 : fileVal4,
             categoryName :$(".cats").find(":selected").val()
         };
-        let displayError=$("#EditError");
-        updateServer(form,formData, productmodel, displayError,"PUT");
+        //let displayError=$("#EditError");
+
+
+        updateServer(form,formData, productmodel,"PUT");
 
     }
 
@@ -317,40 +322,59 @@ function validateImage(fileVal1,fileVal2,fileVal3,fileVal4,file1,file2,file3 ,fi
 
         return isError;
 }
-
-function updateServer(form,formData, productmodel, displayError,methodType) {
+$("#GlobalError").hide();
+function updateServer(form,formData, productmodel,methodType) {
+    form.parent().parent().parent().modal('hide');
+    $("#GlobalError").html("");
+    form.find("input[type='file']").val("");
     $.ajax({
         processData: false, //prevent jQuery from automatically transforming the data into a query string
         type: "POST",
         enctype: 'multipart/form-data',
-        url: "/productApi/image/create",
+        url: "/api/images",
         contentType: false,
         cache: false,
         data: formData,
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader(header, token);
+        },
         success: function () {
             $.ajax({
                 type: methodType,
                 contentType: "application/json",
-                url: "/productApi/" + (methodType==="PUT"?"update":"create"),
+                url: "/api/products",
                 data: JSON.stringify(productmodel),
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader(header, token);
                 },
                 success: function (result) {
-                    form.find("input[type='submit']").show();
+                    //form.parent().parent().parent().modal('hide');
                     form.find("div[class='addProg']").hide();
+                    $("#Progg").hide();
                     getall();
-                    form.parent().parent().parent().modal('hide');
+                    clearForm();
                     console.log(result);
                 },
                 error: function (e) {
-                    form.find("input[type='submit']").show();
                     form.find("div[class='addProg']").hide();
+                    $("#Progg").hide();
                     console.log("ERROR: ", e);
-                    displayError.text(e.responseJSON.message);
-                    displayError.show();
+                    //displayError.text(e.responseJSON.errors[0]);
+                    $.each(e.responseJSON.errors,function (k,v) {
+                        $("#GlobalError").append("<p>* "+v+"<p>");
+                    });
+
+
+                    $("#GlobalError").show();
+                    //form.parent().parent().parent().modal('show');
                 }
             });
+        },
+        error:function () {
+            form.find("div[class='addProg']").hide();
+            $("#Progg").hide();
+            $("#GlobalError").append("<p>error while writing images</p>");
+            $("#GlobalError").show();
         }
     })
 }
@@ -366,7 +390,7 @@ function DoDelet(){
     $.ajax({
         type : "DELETE",
         //contentType : "application/json",
-        url :"/productApi/delete/"+$("#item0").val(),
+        url :"/api/products/"+$("#item0").val(),
         //headers: {'X-XSRF-TOKEN': token},
         beforeSend: function( xhr ) {
             xhr.setRequestHeader(header, token);
@@ -409,9 +433,12 @@ $(document).ready(function(){
 });
 
 $("#addnewbtn").click(function () {
-    $("#EditError").hide();
-    $("#AddError").hide();
-/*    $("#err1").text("");
+    //$("#EditError").hide();
+    //$("#AddError").hide();
+});
+
+function clearForm(){
+    $("#err1").text("");
     $("#err2").text("");
     $("#err3").text("");
     $("#err4").text("");
@@ -421,8 +448,9 @@ $("#addnewbtn").click(function () {
     $("#add-item4").val("");
     $("#add-item5").val("");
     $("#add-item6").val("");
-    $("#add-item7").val("");*/
-});
+    $("#add-item7").val("");
+}
+
 
 $("#paging").on('keyup', function (e) {
     if (e.keyCode == 13) {

@@ -11,10 +11,12 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 public class Category implements Serializable {
     @Id
+    @NotEmpty(message = "category must not be empty")
     private String name;
     private String description;
     @OneToMany(

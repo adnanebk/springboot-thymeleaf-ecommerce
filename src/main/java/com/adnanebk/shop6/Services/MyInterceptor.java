@@ -34,7 +34,7 @@ public class MyInterceptor implements HandlerInterceptor {
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
         System.out.println("interceptor");
         response.addHeader("strict-transport-security", "max-age=31622400; includeSubDomains");
-        response.addHeader("Cache-Control", CacheControl.noCache().getHeaderValue());
+        //response.addHeader("Cache-Control", CacheControl.noCache().getHeaderValue());
         if (request.getMethod().equals("GET") && response.getStatus() == 200) {
 
             modelAndView.getModel().put("categories", this.categoryRepo.getAll());
