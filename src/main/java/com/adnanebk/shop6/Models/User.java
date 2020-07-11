@@ -63,7 +63,6 @@ public class User {
             orphanRemoval = true
     )
     private List<Order> orders;
-    @OneToOne
     @Transient
     private Cart cart;
 
