@@ -1,0 +1,1 @@
+heroku war:deploy shop61.war --app adnane-shop
