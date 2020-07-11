@@ -16,10 +16,10 @@ import org.springframework.validation.Validator;
 
 @Component
 public class FormValidator implements Validator {
-    @Autowired
-    UserRepo userRepo;
+    final UserRepo userRepo;
 
-    public FormValidator() {
+    public FormValidator(UserRepo userRepo) {
+        this.userRepo = userRepo;
     }
 
     public boolean supports(Class<?> aClass) {

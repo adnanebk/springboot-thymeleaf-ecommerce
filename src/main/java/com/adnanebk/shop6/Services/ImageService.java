@@ -39,7 +39,6 @@ public class ImageService {
         this.resourceLoader = resourceLoader;
     }
     public  String HandleImage(String imageUrl, String name) {
-        System.out.println("handleeee");
         if (!imageUrl.isEmpty() && !imageUrl.toLowerCase().endsWith("jpg") && !imageUrl.toLowerCase().endsWith("png") && !imageUrl.toLowerCase().endsWith("jpeg")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, name + " is not a correct url");
         }

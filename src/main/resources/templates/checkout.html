@@ -77,6 +77,8 @@
           <li style="color: red" th:each="err : ${#fields.errors('*')}" th:text="${err}">Input is incorrect</li>
         </ul>
         </div>
+        <input hidden="hidden" name="username" th:value="${username}">
+
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="firstName" th:text="#{firstName}">First name</label>

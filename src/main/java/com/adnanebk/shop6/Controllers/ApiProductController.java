@@ -25,7 +25,6 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -92,10 +91,7 @@ public class ApiProductController {
         return  ResponseEntity.ok().build();
     }
 
-    @DeleteMapping(
-            value = {"/products/{id}"},
-            headers = {"Accept=application/json"}
-    )
+    @DeleteMapping("/products/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable("id") int id) {
         Product Product = this.productService.GetAllProducts().stream().filter((p) -> p.getId() == id).findFirst().orElse(null);
         if (Product==null) {

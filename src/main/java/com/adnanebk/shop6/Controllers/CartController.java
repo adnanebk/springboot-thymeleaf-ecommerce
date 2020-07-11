@@ -4,13 +4,12 @@
 //
 
 package com.adnanebk.shop6.Controllers;
-import com.adnanebk.shop6.Models.Cart;
+import com.adnanebk.shop6.Services.Cart;
 import com.adnanebk.shop6.Models.CartLine;
 import com.adnanebk.shop6.Models.Product;
 import com.adnanebk.shop6.Repositories.ProductRepo;
 import java.util.List;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,6 +36,7 @@ public class CartController {
 
     @GetMapping({"/cart"})
     public String ShowCart(Model m) {
+
         m.addAttribute("cartlines", this.cart.GetCartLines());
         m.addAttribute("total", this.cart.ComputeTotalValue());
         m.addAttribute("active", "cart");
@@ -86,10 +86,5 @@ public class CartController {
         product.ifPresent(value -> this.cart.RemoveLine(value, session));
         return ResponseEntity.status(HttpStatus.OK).build();
     }
-    @PostMapping({"/api/testpost"})
-    @ResponseBody
-    public String testpost(){
 
-        return "worked";
-    }
 }

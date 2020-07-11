@@ -5,22 +5,19 @@
 
 package com.adnanebk.shop6.Controllers;
 
-import com.adnanebk.shop6.Models.Cart;
+import com.adnanebk.shop6.Services.Cart;
 import com.adnanebk.shop6.Models.CartLine;
 import com.adnanebk.shop6.Models.Product;
 import com.adnanebk.shop6.Services.ImageService;
 import com.adnanebk.shop6.Services.ProductService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;

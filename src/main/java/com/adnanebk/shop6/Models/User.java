@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+
+import com.adnanebk.shop6.Services.Cart;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -72,7 +74,7 @@ public class User {
     public User() {
     }
 
-    public User(@NotEmpty(message = "The username is required") @Length(min = 2,message = "You must have more than one character") String username, @NotEmpty(message = "the email is required") @Length(min = 2,message = "You must have more than one character") @Email(message = "The Email field does not have a correct format") String email) {
+    public User( String username,  String email) {
         this.username = username;
         this.email = email;
     }

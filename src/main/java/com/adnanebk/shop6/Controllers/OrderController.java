@@ -5,11 +5,10 @@
 
 package com.adnanebk.shop6.Controllers;
 
-import com.adnanebk.shop6.Models.Cart;
+import com.adnanebk.shop6.Services.Cart;
 import com.adnanebk.shop6.Models.CartLine;
 import com.adnanebk.shop6.Models.Order;
 import com.adnanebk.shop6.Models.Product;
-import com.adnanebk.shop6.Models.SocialUser;
 import com.adnanebk.shop6.Models.User;
 import com.adnanebk.shop6.Repositories.CartLineRepo;
 import com.adnanebk.shop6.Repositories.OrderRepo;
@@ -18,11 +17,10 @@ import com.adnanebk.shop6.Services.ProductService;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
-import org.bouncycastle.util.Iterable;
-import org.modelmapper.internal.util.Iterables;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,28 +48,25 @@ public class OrderController {
         this.productService = productService;
     }
 
-    @GetMapping({"/orders"})
-    public String Myorders(Model m, Principal principal, HttpSession session) {
-        if (principal != null) {
-            User user = this.userRepo.findByUsername(principal.getName());
-            if (user == null) {
-                SocialUser Suser = (SocialUser)session.getAttribute("socialuser");
-                User SavedUser = new User(Suser.getName(), Suser.getEmail());
-                SavedUser.setRoles("ROLE-USER");
-                user = this.userRepo.findByUsername(Suser.getName());
-            }
+    @GetMapping("/orders")
+    public String Myorders(HttpServletRequest request) {
+       // boolean istrue=SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
 
+        Object attr = request.getAttribute("username");
+        String username = (String) request.getAttribute("username");
+        if (username != null) {
+            User user = this.userRepo.findByUsername(username);
             if (user != null) {
                 List<CartLine> cartlines = user.getOrders().stream().flatMap((o) -> o.getCartLines().stream()).collect(Collectors.toList());
                 if (cartlines.size() > 0) {
-                    m.addAttribute("cartlines", cartlines);
-                    m.addAttribute("total", cartlines.stream().mapToDouble((c) -> (double)c.getQuantity() * c.getProduct().getPrice()).sum());
+                    request.setAttribute("cartlines", cartlines);
+                    request.setAttribute("total", cartlines.stream().mapToDouble((c) -> (double)c.getQuantity() * c.getProduct().getPrice()).sum());
                 }
 
             }
 
         }
-        m.addAttribute("active", "order");
+        request.setAttribute("active", "order");
         return "orders";
     }
 
@@ -81,10 +76,7 @@ public class OrderController {
     }
 
     @GetMapping({"/checkout"})
-    public String Checkout(Principal principal, Model m, Order order, @RequestParam(value = "prod",required = false) String productName, @RequestParam(value = "qt",required = false) String qt) {
-        if (principal == null) {
-            return "redirect:/";
-        } else {
+    public String Checkout( Model m, Order order, @RequestParam(value = "prod",required = false) String productName, @RequestParam(value = "qt",required = false) String qt) {
             if (productName != null && qt != null) {
                 Product product = this.productService.GetAllProducts().stream().filter((p) -> p.getName().equals(productName)).findFirst().orElse(null);
                 if (product != null) {
@@ -103,29 +95,20 @@ public class OrderController {
 
             m.addAttribute("order", order);
             return "checkout";
-        }
+
     }
 
     @PostMapping({"/checkout"})
-    public String SaveOrders(@Valid Order order, BindingResult bindingResult, Principal principal, HttpSession session) {
-        this.cartLines = this.cart.GetCartLines();
+    public String SaveOrders(@Valid Order order, BindingResult bindingResult, HttpSession session) {
         if (bindingResult.hasErrors()) {
             return "checkout";
-        } else {
-            User user = this.userRepo.findByUsername(principal.getName());
-            SocialUser Suser = (SocialUser)session.getAttribute("socialuser");
-            if (user == null) {
-                if (!this.userRepo.existsById(Suser.getName())) {
-                    System.out.println("----------" + Suser.getName());
-                    User newUser = new User(Suser.getName(), Suser.getEmail());
-                    newUser.setRoles("ROLE-USER");
-                    this.userRepo.save(newUser);
-                }
 
-                user = this.userRepo.findByUsername(Suser.getName());
-            }
+        }
+           String userName = order.getUsername();
+        User user = this.userRepo.findByUsername(userName);
 
-            order.setUser(user);
+
+        order.setUser(user);
             if (this.cartLine != null) {
                 CartLine SavedCartline = this.cartLineRepo.save(this.cartLine);
                 order.setCartLine(SavedCartline);
@@ -143,7 +126,6 @@ public class OrderController {
             }
 
             return "redirect:/orders";
-        }
     }
 
     @PostMapping(

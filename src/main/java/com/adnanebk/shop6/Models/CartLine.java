@@ -5,6 +5,8 @@
 
 package com.adnanebk.shop6.Models;
 
+import com.adnanebk.shop6.Services.Cart;
+
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

@@ -16,6 +16,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,16 +75,14 @@ public class LoginController {
         return principal;
     }
 
-    @RequestMapping({"/login/facebook"})
-    public String FacebookRegistration(Principal principal) {
-        System.out.printf("loggggggfffffggggg" + principal.getName());
-        return "redirect:/";
+    @RequestMapping({"/oauth_login"})
+    public String FacebookRegistration() {
+        return "login";
     }
 
-    @RequestMapping({"/login/google"})
-    @ResponseBody
+    @RequestMapping("/oauth2/callback/google")
     public Principal GoogleRegistration(Principal principal) {
-        System.out.printf("loggggggfffffggggg2" + principal.getName());
+        System.out.printf("loggggggfffffggggg2");
         return principal;
     }
 }
